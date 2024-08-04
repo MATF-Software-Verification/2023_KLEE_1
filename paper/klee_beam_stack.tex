@@ -46,7 +46,32 @@ Izbor narednog stanja za ispitivanje zavisi od primenjene strategije za obilazak
 
 U nastavku rada će biti predstavljena upotreba \textit{Beam Stack Search} algoritma pretrage, kao i njegova implementacija u okviru alata za simboličko izvršavanje \verb|KLEE|. Na kraju, biće izvršena uporedna analiza performansi ovog algoritma sa nekim od algoritama koje pruža alat \verb|KLEE|.
 
-\section{Opis algoritma pretrage \textit{Beam Stack Search}}
+\section{Opis algoritma}
+
+Algoritam \textit{Beam Stack Search} \cite{BeamStackSearch-10.5555/3037062.3037074} predstavlja proširenje heurističkog algoritma pretrage \textit{Beam Search}, pa će u nastavku prvo biti opisan ovaj algoritam. Iako u opštem slučaju ovi algoritmi imaju mogućnost obilaska proizvoljnog grafa, u nastavku rada će se, zbog potreba u simboličkom izvršavanju, razmatrati samo obilazak stabla.
+
+\subsection{\textit{Beam Search} algoritam pretrage}
+
+Algoritam pretrage \textit{Beam Search}, nadalje \textit{BS} algoritam, svoje najveće primene nalazi u oblasti mašinskog učenja, konkretno u obradi prirodnog jezika i mašinskog prevođenja \cite{HarpySpeechRecognitionSystem, BeamSearchStrategiesForNeuralMachineTranslation, BestFirstBeamSearch}. Međutim, ideje koje on uvodi se mogu primeniti i u simboličkom izvršavanju. Naime, \textit{BS} algoritam, po cenu gubitka kompletnosti pretrage, heurističkim pristupom brzo i uz malu memorijsku potrošnju pronalazi dobre, po nekoj izabranoj metrici, putanje u težinskom grafu. U kontekstu simboličkog izvršavanja, ova ideja se može primeniti na pronalaženje putanja koje, na primer, maksimizuju pokrivenost koda.
+
+Algoritam kao parametar prihvata ceo broj $w$, tj. širinu pretrage, i zasnovan na \textit{BFS} pretrazi, sa modifikacijom da na svakom nivou stabla pretrage zadržava samo $w$ najboljih čvorova (najveće ili najmanje težine, zavisno od izabrane metrike), a ostale čvorove odbacuje. Primer izvršavanja za $w = 2$ nad stablom gde se prednost daje čvorovima veće težine prikazan je na slici \ref{fig:beam_search}. Zeleni čvorovi označavaju čvorove izabrane za pretragu, crveni čvorove koji su odbačeni, a svetlo crveni čvorove koji, kao potomci odbačenih čvorova, nisu ni razmatrani.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{ilustracije/beam_search_primer.png}
+    \caption{Izvršavanje \textit{BS} algoritma nad stablom za širinu pretrage $w = 2$}
+    \label{fig:beam_search}
+\end{figure}
+
+Pošto se na svakom nivou stabla zadržava samo $w$ čvorova, a prethodno posećeni čvorovi se ne pamte, memorijska složenost ovog algoritma pretrage je $O(w)$, tj. ne zavisi od veličine stabla. Međutim, problem u ovom pristupu je to što će samo $w$ putanja biti u potpunosti (ukoliko su one konačne težine) istraženo, dok su sve ostale putanje odbačene. U kontekstu simboličkog izvršavanja, ovo bi dovelo do gubitka saglasnosti analize. Da bi se ovaj problem rešio, potrebno je izvršiti modifikaciju algoritma, koja je data u vidu \textit{Beam Stack Search} algoritma pretrage.
+
+\subsection{\textit{Beam Stack Search} algoritam pretrage}
+
+\section{Implementacija u okviru alata za simboličko izvršavanje KLEE}
+
+\section{Eksperimentalna evaluacija algoritma}
+
+\section{Zaključak}
 
 \addcontentsline{toc}{section}{Literatura}
 \appendix
