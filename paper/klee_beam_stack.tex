@@ -2,14 +2,16 @@
 
 \usepackage{color}
 \usepackage{xurl}
-\usepackage[T2A]{fontenc} % enable Cyrillic fonts
-\usepackage[utf8]{inputenc} % make weird characters work
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{csquotes}
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{float}
 \usepackage[english,serbian]{babel}
 \usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amsthm}
 \usepackage{amsmath}
 
@@ -18,6 +20,8 @@
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lema}
+
+\floatname{algorithm}{Algoritam}
 
 \title{\textit{Beam Stack Search} algoritam pretrage u okviru alata za simboličko izvršavanje KLEE\\ \small{Seminarski rad u okviru kursa\\Verifikacija softvera\\Matematički fakultet}}
 \author{Aleksandar Stefanović, 1021/2023 \and Petar Đorđević, 1088/2022}
@@ -66,6 +70,54 @@ Algoritam kao parametar prihvata ceo broj $w$, tj. širinu pretrage, i zasnovan 
 Pošto se na svakom nivou stabla zadržava samo $w$ čvorova, a prethodno posećeni čvorovi se ne pamte, memorijska složenost ovog algoritma pretrage je $O(w)$, tj. ne zavisi od veličine stabla. Međutim, problem u ovom pristupu je to što će samo $w$ putanja biti u potpunosti (ukoliko su one konačne težine) istraženo, dok su sve ostale putanje odbačene. U kontekstu simboličkog izvršavanja, ovo bi dovelo do gubitka saglasnosti analize. Da bi se ovaj problem rešio, potrebno je izvršiti modifikaciju algoritma, koja je data u vidu \textit{Beam Stack Search} algoritma pretrage.
 
 \subsection{\textit{Beam Stack Search} algoritam pretrage}
+
+Algoritam \textit{Beam Stack Search}, nadalje \textit{BSS}, prvi put je opisan u radu \cite{BeamStackSearch-10.5555/3037062.3037074} i predstavlja nadogradnju osnovnog \textit{Beam Search} algoritma koja rešava prethodni problem odbacivanja potencijalno važnih putanja izvršavanja, ali po cenu povećane memorijske složenosti. Naime, osnovna ideja \textit{BSS} algoritma je u tome da se, umesto odbacivanja, neposećena stanja čuvaju za kasniju obradu u posebno uređenoj stek strukturi. Stek je uređen po nivoima - čvorovi na proizvoljnom nivou stabla koji su razmatrani, ali ne i izabrani za obradu, se postavljaju kao jedan nivo čvorova na steku. U trenutku kada bi standardna \textit{Beam Search} pretraga stigla do kraja stabla, sa vrha steka se uzima jedan nivo čvorova i nastavlja se sa pretragom. Algoritam je prikazan pseudokodom \ref{alg:tree_beam_stack_search}.
+
+\begin{algorithm}
+    \begin{algorithmic}[1]
+            \Procedure{BSS}{Tree t, Int w}
+                \State Vec<Node> currentLevel = \{t.root()\}
+                \State Vec<Node> nextLevel = \{\}
+                \State Stack<Vec<Node>{>} beamStack = \{\}
+                \While {not currentLevel.empty()}
+                    \For {Node n in currentLevel}
+                        \State visit(n)
+                        \State nextLevel.append(t.adjacent(n))
+                    \EndFor
+                    \State nextLevel.sort()
+                    \State Int beamWidth = min(nextLevel.size(), w)
+                    \State currentLevel = nextLevel[0 : beamWidth]
+                    \If {beamWidth != nextLevel.size()}
+                        \State beamStack.push(nextLevel[beamWidth : nextLevel.size()])
+                    \EndIf
+                    \State nextLevel.clear()
+                    \If {currentLevel.empty() and not beamStack.empty()}
+                        \State currentLevel = beamStack.top()
+                        \State beamStack.pop()
+                    \EndIf
+                \EndWhile
+            \EndProcedure
+    \end{algorithmic}
+    \caption{Tree Beam Stack Search}
+    \label{alg:tree_beam_stack_search}
+\end{algorithm}
+
+Upotreba steka sa neposećenim čvorovima garantuje da će svi čvorovi stabla u nekom trenutku biti posećeni, ali njegovo održavanje zahteva dodatnu memoriju u odnosu na klasičan \textit{Beam Search} algoritam. Ukoliko pretpostavimo da je stablo nad kojem se algoritam izvršava binarno, što i jeste validna pretpostavka za osnovni slučaj simboličkog stabla izvršavanja, može se pokazati da je memorijska složenost algoritma ograničena sa dubinom stabla i zadatim parametrom širine pretrage $w$.
+
+\begin{lemma}
+Ukoliko se algoritam \textit{Beam Stack Search} primenjuje nad binarnim stablom, memorijska složenost algoritma je $O(dw)$, gde $d$ predstavlja dubinu stabla, a $w$ je zadati parametar širine pretrage.
+\end{lemma}
+
+\begin{proof}
+Za dokaz je dovoljno pokazati da je (1) veličina svakog nivoa čvorova na steku najviše $w$ i (2) na steku je u svakom trenutku najviše $d$ nivoa čvorova.
+\begin{enumerate}
+    \item Posmatrajmo skup izabranih čvorova u $i$-toj iteraciji algoritma \ref{alg:tree_beam_stack_search}, u oznaci $currentLevel$. Pre ulaska u petlju, ovaj skup sadrži samo koren stabla, te je njegova kardinalnost jednaka $card(currentLevel) = 1$. U $i-toj$ iteraciji petlje, skup čvorova $currentLevel$ se ažurira tako što se od njima susednih čvorova, u oznaci $nextLevel$, bira $min(w, card(nextLevel))$ njih. Prema tome, važi da je $card(currentLevel) \leq w$ u svakoj iteraciji petlje. Usled uslova da je stablo binarno, dodatno važi i $card(nextLevel) \leq 2 \cdot card(currentLevel) \leq 2w$. Pošto se na stek dodaju skupovi čvorova veličine $card(nextLevel) - w$, iz prethodnog važi da će se na steku u svakom trenutku nalaziti samo skupovi čvorova veličine manje ili jednake od $w$.
+
+    \item Dovoljno je primetiti da nivoi na steku, počev od njegovor vrha, odgovaraju strogo opadajućem redosledu nivoa u stablu, gde najmanji nivo ima koren stabla. Naime, svakim ponovnim pokretanjem pretrage od nekog nivoa na steku se taj nivo skida sa steka, a dalja pretraga do ponovnog pokretanja od nekog nivoa sa steka teče strogo niz stablo, pa sledi da je nivo koji odgovara svakom skupu čvorova koji se dodaje na stek strogo manji od onog koji je prethodno izbačen sa steka, kao i od onog koji je prethodno dodat na stek. Pošto stablo ima najviše $d$ nivoa, sledi da se na steku u svakom trenutku može naći najviše $d$ nivoa čvorova.
+\end{enumerate}
+\end{proof}
+
+Ovako ograničena memorijska složenost sprečava prebrzo zauzeće memorije kao što je to slučaj kod klasičnog $BFS$ algoritma, ali pritom zadržava mogućnost šireg prostora pretrage i istovremenog praćenja više potencijalno zanimljivih putanja pomoću podesivog parametra širine pretrage $w$. Zapravo, za vrednost parametra $w = 1$, algoritam bi se ponašao kao $DFS$ algoritam pretrage, pri čemu se u svakom koraku bira bolji čvor za nastavak pretrage, dok bi se za dovoljno veliko $w$, vrednosti veće ili jednake širini celokupnog stabla, ponašao kao $BFS$ algoritam. Dodatno, izbor čvorova za posetu prema nekoj izabranoj meri kvaliteta omogućava brži pronalazak kvalitetnih putanja, što bi u kontekstu simboličkog izvršavanja moglo da podrazumeva putanje čije izvršavanje osigurava veliki stepen pokrivenosti koda.
 
 \section{Implementacija u okviru alata za simboličko izvršavanje KLEE}
 
