@@ -121,13 +121,68 @@ Ovako ograničena memorijska složenost sprečava prebrzo zauzeće memorije kao 
 
 \section{Implementacija u okviru alata za simboličko izvršavanje KLEE}
 
+U projektu koji implementira koncepte iz ovog rada \cite{Projekat} klasa \emph{BeamSearcher} predstavlja specijalizovanu implementaciju klase \emph{Searcher} koja upravlja pretragom stanja primenom modifikovanog
+$BSS$ algoritma. Bazna klasa Searcher, koja je apstraktna i implementirana u KLEE alatu,
+definiše strategije ili heuristike za selekciju stanja koja će biti dalje istražena.
+
+Klasa BeamSearcher nasleđuje ovu baznu klasu i preopterećuje njene čisto virtualne metode:
+\begin{itemize}
+    \item \textbf{selectState:} Ova metoda bira jedno stanje za dalje istraživanje. U kontekstu $BSS$ algoritma, bira se prvo stanje u trenutnom sloju.
+
+    \item \textbf{update:} Ova metoda obaveštava pretraživač o novim ili uklonjenim stanjima. Koristi se za ažuriranje slojeva pretrage nakon što su stanja razgranata ili uklonjena.
+
+    \item \textbf{empty} Ova metoda proverava da li su sva stanja istražena, tj. da li pretraživač više nema stanja za istraživanje.
+\end{itemize}
+
+\subsection{Modifikacija implementacije algoritma}
+
+U implementaciji klase uvedena je modifikacija algoritma u odnosu na pređašnje opisani $BSS$: parametar \emph{beamStackSwapLimit}, koji je uveden kako bi se izbeglo zaglavljivanje u lokalnim maksimumima tokom pretrage. Ovaj parametar omogućava pretraživaču da, nakon određenog broja iteracija u kojima nije pronađeno novo pokrivanje (\emph{statesSinceLastCoveredNew}), vrati pretragu na početak steka, tj. na ranija stanja umesto da nastavlja sa trenutnog nivoa. Kada je vrednost parametra \emph{beamStackSwapLimit} postavljena na 0, algoritam se ponaša kao klasičan $BFS$.
+
+
+Specifično, ako \emph{currentLayer} postane prazan, a broj iteracija bez novog pokrivanja premaši \emph{beamStackSwapLimit}, pretraživač će zameniti trenutni sloj sa slojem iz \emph{unvisitedStack}, uzimajući stanja iz ranijih faza pretrage. Na taj način, pretraga može da se vrati na prethodna stanja koja su možda bliža rešenju, čime se povećava šansa za izlazak iz lokalnog maksimuma.
+
+Iako ova modifikacija može povećati memorijske zahteve (gubeći garanciju složenosti od \(O(dw)\)), eksperimentalno se pokazalo da nema značajan negativan uticaj na performanse algoritma, dok istovremeno povećava njegovu robusnost u situacijama sa kompleksnim pretraživačkim prostorima.
+
+\subsection{Metrika}
+
+Koristi se metrika za izbor čvorova koja je zasnovana na istoj strategiji kao i podrazumevani \emph{nurs
+} (\emph{Non-Uniform Random Search}) algoritam. Ova metrika kombinuje dve komponente:
+
+\begin{enumerate}
+\item Minimalna udaljenost do najbliže nepokrivene instrukcije u grafu kontrole toka.
+\item Broj instrukcija izvršenih od poslednje pokrivene nove grane.
+\end{enumerate}
+
+Algoritam maksimizuje pokrivenosti koda tako što bira stanja koja će se dalje istraživati biranjem novih, do tada nepokrivenih delova programa. Pošto manja vrednost za obe metrike daje veći prioritet stanju, one se invertuju kako bi se postigao željeni efekat.
+
+\subsection{Pokretanje Algoritma u okviru alata KLEE}
+
+KLEE omogućava korisnicima da prilagode način pretrage kroz nekoliko različitih opcija. Za korišćenje BeamSearcher algoritma, dve ključne opcije su:
+\begin{enumerate}
+    \item \textbf{beam-width}: Ova opcija postavlja širinu pretrage, što znači broj stanja koja se zadržavaju za dalje istraživanje u svakom sloju pretrage. Širina pretrage određuje koliko različitih grana se istražuje u jednom trenutku. Podrazumevana vrednost za ovu opciju je 256.
+    \item \textbf{beam-stack-swap-limit}:  Ova opcija određuje broj stanja koja će biti posećena u nizu bez pokrivanja nove instrukcije pre nego što se pretraga vrati na početak steka. Ako je postavljena na 0, pretraga će se ponašati kao klasična $BFS$. Podrazumevana vrednost je 1.000.000.
+\end{enumerate}
+
+Da biste pokrenuli KLEE koristeći \emph{BeamSearcher} sa specifičnim vrednostima za \emph{beam-width} i \emph{beam-stack-swap-limit}, možete koristiti sledeću komandu:
+
+\begin{verbatim}
+klee --searcher=beam \
+    --beam-width=128 \
+    --beam-stack-swap-limit=500000 \
+    /putanja/do/programa.bc
+\end{verbatim}
+
+Ova komanda pokreće KLEE sa BeamSearcher algoritmom, postavlja širinu beam pretrage na 128, i ograničava broj iteracija bez pokrivanja nove instrukcije na 500.000 pre nego što pretraga pređe na ranija stanja.
+
+
 \section{Eksperimentalna evaluacija algoritma}
+
 
 \section{Zaključak}
 
 \addcontentsline{toc}{section}{Literatura}
 \appendix
-\bibliography{literatura}
+\bibliography{literatura} 
 \bibliographystyle{plain}
 
 \end{document}
