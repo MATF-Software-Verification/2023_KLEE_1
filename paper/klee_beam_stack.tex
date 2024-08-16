@@ -136,21 +136,19 @@ Klasa BeamSearcher nasleđuje ovu baznu klasu i preopterećuje njene čisto virt
 
 \subsection{Modifikacija implementacije algoritma}
 
-U implementaciji klase uvedena je modifikacija algoritma u odnosu na pređašnje opisani $BSS$: parametar \emph{beamStackSwapLimit}, koji je uveden kako bi se izbeglo zaglavljivanje u lokalnim maksimumima tokom pretrage. Ovaj parametar omogućava pretraživaču da, nakon određenog broja iteracija u kojima nije pronađeno novo pokrivanje (\emph{statesSinceLastCoveredNew}), vrati pretragu na početak steka, tj. na ranija stanja umesto da nastavlja sa trenutnog nivoa. Kada je vrednost parametra \emph{beamStackSwapLimit} postavljena na 0, algoritam se ponaša kao klasičan $BFS$.
+U implementaciji klase uvedena je modifikacija algoritma u odnosu na pređašnje opisani $BSS$: parametar \emph{beamStackSwapLimit}, koji je uveden kako bi se izbeglo zaglavljivanje u lokalnim maksimumima tokom pretrage. Ovaj parametar omogućava pretraživaču da, nakon određenog broja iteracija u kojima nije pronađeno novo pokrivanje (\emph{statesSinceLastCoveredNew}), vrati pretragu na dno steka, tj. na ranija stanja umesto da nastavlja sa trenutnog nivoa. Kada je vrednost parametra \emph{beamStackSwapLimit} postavljena na 0, algoritam se ponaša kao klasičan $BSS$.
 
-
-Specifično, ako \emph{currentLayer} postane prazan, a broj iteracija bez novog pokrivanja premaši \emph{beamStackSwapLimit}, pretraživač će zameniti trenutni sloj sa slojem iz \emph{unvisitedStack}, uzimajući stanja iz ranijih faza pretrage. Na taj način, pretraga može da se vrati na prethodna stanja koja su možda bliža rešenju, čime se povećava šansa za izlazak iz lokalnog maksimuma.
+Specifično, ako \emph{currentLayer} postane prazan, a broj iteracija bez novog pokrivanja premaši \emph{beamStackSwapLimit}, pretraživač će kao naredni sloj uzeti sa sloj sa dna steka slojeva \emph{unvisitedStack}, uzimajući stanja iz ranijih faza pretrage. Na taj način, pretraga može da se vrati na prethodna stanja koja su možda bliža rešenju, čime se povećava šansa za izlazak iz lokalnog maksimuma.
 
 Iako ova modifikacija može povećati memorijske zahteve (gubeći garanciju složenosti od \(O(dw)\)), eksperimentalno se pokazalo da nema značajan negativan uticaj na performanse algoritma, dok istovremeno povećava njegovu robusnost u situacijama sa kompleksnim pretraživačkim prostorima.
 
 \subsection{Metrika}
 
-Koristi se metrika za izbor čvorova koja je zasnovana na istoj strategiji kao i podrazumevani \emph{nurs
-} (\emph{Non-Uniform Random Search}) algoritam. Ova metrika kombinuje dve komponente:
+Koristi se metrika za izbor čvorova koja je zasnovana na istoj strategiji kao i podrazumevani \emph{nurs} (\emph{Non-Uniform Random Search}) algoritam. Ova metrika kombinuje dve komponente:
 
 \begin{enumerate}
 \item Minimalna udaljenost do najbliže nepokrivene instrukcije u grafu kontrole toka.
-\item Broj instrukcija izvršenih od poslednje pokrivene nove grane.
+\item Broj instrukcija izvršenih od poslednje pokrivene nove instrukcije.
 \end{enumerate}
 
 Algoritam maksimizuje pokrivenosti koda tako što bira stanja koja će se dalje istraživati biranjem novih, do tada nepokrivenih delova programa. Pošto manja vrednost za obe metrike daje veći prioritet stanju, one se invertuju kako bi se postigao željeni efekat.
@@ -160,7 +158,7 @@ Algoritam maksimizuje pokrivenosti koda tako što bira stanja koja će se dalje 
 KLEE omogućava korisnicima da prilagode način pretrage kroz nekoliko različitih opcija. Za korišćenje BeamSearcher algoritma, dve ključne opcije su:
 \begin{enumerate}
     \item \textbf{beam-width}: Ova opcija postavlja širinu pretrage, što znači broj stanja koja se zadržavaju za dalje istraživanje u svakom sloju pretrage. Širina pretrage određuje koliko različitih grana se istražuje u jednom trenutku. Podrazumevana vrednost za ovu opciju je 256.
-    \item \textbf{beam-stack-swap-limit}:  Ova opcija određuje broj stanja koja će biti posećena u nizu bez pokrivanja nove instrukcije pre nego što se pretraga vrati na početak steka. Ako je postavljena na 0, pretraga će se ponašati kao klasična $BFS$. Podrazumevana vrednost je 1.000.000.
+    \item \textbf{beam-stack-swap-limit}:  Ova opcija određuje broj stanja koja će biti posećena u nizu bez pokrivanja nove instrukcije pre nego što se pretraga vrati na početak steka. Ako je postavljena na 0, pretraga će se ponašati kao klasična $BSS$. Podrazumevana vrednost je 1.000.000.
 \end{enumerate}
 
 Da biste pokrenuli KLEE koristeći \emph{BeamSearcher} sa specifičnim vrednostima za \emph{beam-width} i \emph{beam-stack-swap-limit}, možete koristiti sledeću komandu:
@@ -174,9 +172,61 @@ klee --searcher=beam \
 
 Ova komanda pokreće KLEE sa BeamSearcher algoritmom, postavlja širinu beam pretrage na 128, i ograničava broj iteracija bez pokrivanja nove instrukcije na 500.000 pre nego što pretraga pređe na ranija stanja.
 
-
 \section{Eksperimentalna evaluacija algoritma}
 
+Testiranja su sprovedena u konzistentnim uslovima kako bi se omogućila adekvatna uporedivost rezultata između beam i nurs algoritama. Beam algoritam je pokretan sa podrazumevanim vrednostima, dok su sve iteracije trajale po jedan sat. Memorija je bila ograničena na 1GB, što je obezbedilo da rezultati reflektuju performanse algoritama pod istim resursnim ograničenjima. Testovi su vršeni na istim programima iz coreutils paketa kako bi se smanjio uticaj različitih ulaznih podataka na rezultate.
+
+Za većinu testiranih programa, beam algoritam pokazuje blago poboljšanje u pokrivenosti instrukcija u poređenju sa nurs algoritmom. Na primer, kod programa printf, beam algoritam postiže 49.81\% pokrivenosti instrukcija, što je za 2.46\% više u odnosu na nurs algoritam. Slično tome, sha256sum beleži poboljšanje od 1.31\% sa beam algoritmom.
+Međutim, postoji izuzetak kod programa sort, gde beam algoritam značajno zaostaje sa pokrivenošću od 26.54\%, što je za 9.83\% manje u poređenju sa nurs algoritmom. Ova pojava može biti posledica specifične prirode sortiranja kao problema. Rezultati se mogu videti na slici \ref{fig:icov_comparison} i u tabeli \ref{tab:icov_comparison}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{ilustracije/ICov.png}
+    \caption{Poređenje pokrivenosti instrukcija za nurs i beam algoritme}
+    \label{fig:icov_comparison}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Program} & \textbf{nurs ICov (\%)} & \textbf{beam ICov (\%)} & \textbf{Razlika ICov (\%)} \\ \hline
+\texttt{printf} & 47.35 & 49.81 & 2.46 \\ \hline
+\texttt{mkdir} & 47.71 & 47.18 & -0.53 \\ \hline
+\texttt{sha256sum} & 57.85 & 59.16 & 1.31 \\ \hline
+\texttt{touch} & 31.71 & 31.44 & -0.27 \\ \hline
+\texttt{sort} & 36.37 & 26.54 & -9.83 \\ \hline
+\end{tabular}
+\caption{Poređenje pokrivenosti instrukcija za nurs i beam algoritme}
+\label{tab:icov_comparison}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{ilustracije/BCov.png}
+    \caption{Poređenje pokrivenosti grana za nurs i beam algoritme}
+    \label{fig:bcov_comparison}
+\end{figure}
+
+Slično kao i kod pokrivenosti instrukcija, beam algoritam pokazuje poboljšanje ili sličan rezultat kod većine programa kada je reč o pokrivenosti grana. Na primer, kod programa printf, beam algoritam povećava pokrivenost grana za 1.32\% u poređenju sa nurs algoritmom. Takođe, kod sha256sum, beam algoritam beleži blago poboljšanje od 0.91\%.
+
+Opet, kod programa sort, primećujemo značajno smanjenje pokrivenosti grana, gde beam algoritam postiže samo 17.80\%, što je za 8.35\% manje od nurs algoritma. Ovo može biti rezultat toga što beam algoritam, sa svojim specifičnim metodama selekcije stanja, ne uspeva da istraži određene puteve u programu koje nurs algoritam uspešno pokriva. Rezultati se mogu videti na slici \ref{fig:bcov_comparison} i u tabeli \ref{tab:bcov_comparison}.
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Program} & \textbf{nurs BCov (\%)} & \textbf{beam BCov (\%)} & \textbf{Razlika BCov (\%)} \\ \hline
+\texttt{printf} & 37.59 & 38.91 & 1.32 \\ \hline
+\texttt{mkdir} & 34.11 & 33.67 & -0.44 \\ \hline
+\texttt{sha256sum} & 38.00 & 38.91 & 0.91 \\ \hline
+\texttt{touch} & 22.83 & 22.58 & -0.25 \\ \hline
+\texttt{sort} & 26.15 & 17.80 & -8.35 \\ \hline
+\end{tabular}
+\caption{Poređenje pokrivenosti grana vrednosti za nurs i beam algoritme}
+\label{tab:bcov_comparison}
+\end{table}
 
 \section{Zaključak}
 
