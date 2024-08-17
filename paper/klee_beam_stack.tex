@@ -32,11 +32,9 @@
 
 \begin{abstract}
 
-Simboličko izvršavanje omogućava analizu programa bez stvarnog izvršavanja koristeći simboličke vrednosti za praćenje stanja. Ova tehnika može dovesti do eksplozije broja stanja, otežavajući analizu. Različite strategije pretrage, uključujući pretragu u dubinu (DFS) i pretragu u širinu (BFS), koriste se za prevazilaženje problema sa memorijskom složenošću.
+Jedan od osnovnih problema simboličkog izvršavanja kao tehnike verifikacije softvera je eksplozija broja stanja, tj. putanja kojima izvršavanje programa može da teče. Zbog toga, praktično je nemoguće izvršiti potpunu pretragu svih putanja izvršavanja programa, pa alati za simboličko izvršavanje, poput alata KLEE, koriste različite heurističke pristupe za izbor podskupa putanja za istraživanje.
 
-Ovaj rad se fokusira na \textit{Beam Stack Search} (BSS) algoritam, unapređenje \textit{Beam Search} algoritma. Dok standardni \textit{Beam Search} može odbaciti važne putanje zbog fiksne širine pretrage, \textit{BSS} čuva neposećena stanja u steku za kasniju obradu, omogućavajući širu pretragu uz kontrolisano korišćenje memorije. Implementacija \textit{BSS} u alatu \verb|KLEE| uključuje specijalizovanu klasu \emph{BeamSearcher} koja poboljšava efikasnost pretrage.
-
-Eksperimentalna evaluacija pokazuje da \textit{BSS} nudi bolju pokrivenost koda i efikasnije korišćenje memorije u poređenju sa klasičnim strategijama pretrage.
+Ovaj rad je posvećen implementaciji \textit{Beam Stack Search} algoritma pretrage u okviru alata za simboličko izvršavanje KLEE, modifikacije \textit{Beam Search} algoritma koji svoje primene najčešće nalazi u oblasti mašinskog učenja, konkretno u obradi prirodnog jezika i mašinskog prevođenja. Eksperimentalnom evaluacijom pokazujemo da se \textit{Beam Stack Search} algoritam u nekim realnim primerima ponaša bolje od podrazumevanog algoritma pretrage alata KLEE.
 
 \end{abstract}
 
@@ -228,6 +226,8 @@ Slično kao i kod pokrivenosti instrukcija, \textit{Beam Stack Search} algoritam
 \label{tab:bcov_comparison}
 \end{table}
 
+Nad programima \verb|printf|, \verb|sha256sum| i \verb|sort| dodatno je pokrenuta i analiza sa \textit{BSS} algoritmom bez modifikacije sa uzimanjem sloja stanja sa dna steka, tj. sa vrednosti 0 za parametar \verb|--beam-stack-swap-limit|. U sva tri slučaja, dobijena pokrivenost, kako instrukcija, tako i grana, je bila manja nego sa modifikacijom (47.24\%, 56.20\% i 26.52\% za pokrivenost instrukcija i 37.48\%, 36.30\% i 17.78\% za pokrivenost grana, redom za \verb|printf|, \verb|sha256sum| i \verb|sort|).
+
 \section{Zaključak}
 
 Eksperimentalni rezultati pokazuju da \textit{Beam Stack Search} algoritam u velikom broju slučajeva postiže veoma dobre rezultate u kontekstu nivoa pokrivenosti koda - najčešće približno ili čak bolje od podrazumevanog algoritma pretrage alata KLEE. Međutim, zaglavljivanje u pretrazi programa velike složenosti je i dalje moguće, što se može videti iz loših rezultata prilikom analize programa \verb|sort|. Jedan moguć način rešavanja ovog problema je isprepletano pokretanje nekog od nasumičnih algoritama pretrage, poput \textit{Random Path Selection} algoritma, zajedno sa \textit{Beam Stack Search} pretragom.
@@ -236,7 +236,7 @@ Potencijalno poboljšanje algoritma \textit{Beam Stack Search} u kojem se bi se 
 
 \addcontentsline{toc}{section}{Literatura}
 \appendix
-\bibliography{literatura} 
+\bibliography{literatura}
 \bibliographystyle{plain}
 
 \end{document}
