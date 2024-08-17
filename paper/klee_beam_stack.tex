@@ -32,6 +32,12 @@
 
 \begin{abstract}
 
+Simboličko izvršavanje omogućava analizu programa bez stvarnog izvršavanja koristeći simboličke vrednosti za praćenje stanja. Ova tehnika može dovesti do eksplozije broja stanja, otežavajući analizu. Različite strategije pretrage, uključujući pretragu u dubinu (DFS) i pretragu u širinu (BFS), koriste se za prevazilaženje problema sa memorijskom složenošću.
+
+Ovaj rad se fokusira na \textit{Beam Stack Search} (BSS) algoritam, unapređenje \textit{Beam Search} algoritma. Dok standardni \textit{Beam Search} može odbaciti važne putanje zbog fiksne širine pretrage, \textit{BSS} čuva neposećena stanja u steku za kasniju obradu, omogućavajući širu pretragu uz kontrolisano korišćenje memorije. Implementacija \textit{BSS} u alatu \verb|KLEE| uključuje specijalizovanu klasu \emph{BeamSearcher} koja poboljšava efikasnost pretrage.
+
+Eksperimentalna evaluacija pokazuje da \textit{BSS} nudi bolju pokrivenost koda i efikasnije korišćenje memorije u poređenju sa klasičnim strategijama pretrage.
+
 \end{abstract}
 
 \tableofcontents
@@ -42,13 +48,13 @@
 
 Simboličko izvršavanje u svom osnovnom obliku predstavlja tehniku statičke verifikacije programa, tj. verifikacije programa bez njegovog pokretanja, u kojoj se umesto konkretnog stanja programa tokom izvršavanja prati njegovo simboličko stanje \cite{SymExec-King-10.1145/360248.360252}, u cilju otkrivanja grešaka, automatskog generisanja testova sa velikom pokrivenošću koda i slično. Ovo podrazumeva praćenje simboličkih vrednosti promenljivih koje se javljaju u programu, kao i tzv. uslova putanja - logičkih formula nad simboličkim vrednostima tih promenljivih koje moraju da budu zadovoljene da bi izvršavanje stiglo do neke tačke u programu.
 
-Svaka naredba kontrole toka, poput naredbi grananja ili petlji, može prouzrokovati više putanja izvršavanja programa. Ove putanje, zajedno sa pridruženim uslovima putanja i simboličkim vrednostima promenljivih, indukuju simboličko stablo izvršavanja programa. Osim za najtrivijalnije programe, simboličko stablo izvršavanja je nemoguće u potpunosti istražiti. Simboličko stablo izvršavanja program koji sadrži samo $30$ naredbi grananja bi, zanemarujući moguće nedostižne putanje, sadržalo bi $2^{30}$ različitih putanja izvršavanja. Ukoliko program sadrži i petlje, njegovo stablo izvršavanja bi potencijalno bilo i beskonačno veliko (ukoliko i sam uslov prekida petlje ima simboličku vrednost).
+Svaka naredba kontrole toka, poput naredbi grananja ili petlji, može prouzrokovati više putanja izvršavanja programa. Ove putanje, zajedno sa pridruženim uslovima putanja i simboličkim vrednostima promenljivih, indukuju simboličko stablo izvršavanja programa. Osim za najtrivijalnije programe, simboličko stablo izvršavanja je nemoguće u potpunosti istražiti. Simboličko stablo izvršavanja program koji sadrži samo $30$ naredbi grananja, zanemarujući moguće nedostižne putanje, sadržalo bi $2^{30}$ različitih putanja izvršavanja. Ukoliko program sadrži i petlje, njegovo stablo izvršavanja bi potencijalno bilo i beskonačno veliko (ukoliko i sam uslov prekida petlje ima simboličku vrednost).
 
 Upravo eksplozija broja stanja u simboličkom stablu izvršavanja je jedan od glavnih problema sa kojim se susreću alati za simboličko izvršavanje. Neke od tehnika koje alati koriste da bi umanjili efekat ovog problema su odsecanje nedostižnih putanja, spajanje stanja, zadavanje preduslova i aproksimacija petlji \cite{SurveySymExec-CSUR18}. Međutim, čak i uz primenu ovih tehnika, najčešće nije moguće eliminisati dovoljan broj stanja da bi se efikasno istražilo celokupno simboličko stablo izvršavanja, pa je od velike važnosti izbor stanja, tj. putanja, za ispitivanje.
 
-Izbor narednog stanja za ispitivanje zavisi od primenjene strategije za obilazak puteva. Dve osnovne strategije su \textit{DFS}, tj. pretraga u dubinu, i \textit{BFS}, tj. pretraga u širinu. Iako imaju svoje primene, obe strategije imaju svoje mane - pretraga u dubinu ima tendenciju zaglavljivanja u \enquote{dubokim} putanjama indukovanih petljama ili rekurzijom, dok pretraga u širinu povlači izuzetno veliko memorijsko zauzeće usled potrebe za istovremenim čuvanjem čitavog nivoa čvorova simboličkog stabla izvršavanja. Postoje i hibridne tehnike između ova dva pristupa, poput algoritma \textit{BFS/DFS} \cite{BFS/DFS-StrahinjaStanojevic}. Često se primenjuju i tehnike koje koriste randimozovane varijante algoritama pretrage, gde se stanjima koja imaju neku dobru osobinu može dodeliti prednost prilikom izbora, poput algoritma koji podrazumevano koristi alat za simboličko izvršavanje \verb|KLEE| \cite{KLEE-paper-10.5555/1855741.1855756}.
+Izbor narednog stanja za ispitivanje zavisi od primenjene strategije za obilazak puteva. Dve osnovne strategije su \textit{DFS}, tj. pretraga u dubinu, i \textit{BFS}, tj. pretraga u širinu. Iako imaju svoje primene, obe strategije imaju svoje mane - pretraga u dubinu ima tendenciju zaglavljivanja u \enquote{dubokim} putanjama indukovanih petljama ili rekurzijom, dok pretraga u širinu povlači izuzetno veliko memorijsko zauzeće usled potrebe za istovremenim čuvanjem čitavog nivoa, tj. sloja čvorova simboličkog stabla izvršavanja. Postoje i hibridne tehnike između ova dva pristupa, poput algoritma \textit{BFS-DFS} \cite{BFS/DFS-StrahinjaStanojevic}. Često se primenjuju i tehnike koje koriste randimozovane varijante algoritama pretrage, gde se stanjima koja imaju neku dobru osobinu može dodeliti prednost prilikom izbora, poput algoritma koji podrazumevano koristi alat za simboličko izvršavanje \verb|KLEE| \cite{KLEE-paper-10.5555/1855741.1855756}.
 
-U nastavku rada će biti predstavljena upotreba \textit{Beam Stack Search} algoritma pretrage, kao i njegova implementacija u okviru alata za simboličko izvršavanje \verb|KLEE|. Na kraju, biće izvršena uporedna analiza performansi ovog algoritma sa nekim od algoritama koje pruža alat \verb|KLEE|.
+U nastavku rada će biti predstavljena upotreba \textit{Beam Stack Search} algoritma pretrage, kao i njegova implementacija u okviru alata za simboličko izvršavanje \verb|KLEE|. Na kraju, biće izvršena uporedna analiza performansi ovog algoritma sa podrazumevanim algoritmom koji koristi alat \verb|KLEE|.
 
 \section{Opis algoritma}
 
@@ -56,9 +62,9 @@ Algoritam \textit{Beam Stack Search} \cite{BeamStackSearch-10.5555/3037062.30370
 
 \subsection{\textit{Beam Search} algoritam pretrage}
 
-Algoritam pretrage \textit{Beam Search}, nadalje \textit{BS} algoritam, svoje najveće primene nalazi u oblasti mašinskog učenja, konkretno u obradi prirodnog jezika i mašinskog prevođenja \cite{HarpySpeechRecognitionSystem, BeamSearchStrategiesForNeuralMachineTranslation, BestFirstBeamSearch}. Međutim, ideje koje on uvodi se mogu primeniti i u simboličkom izvršavanju. Naime, \textit{BS} algoritam, po cenu gubitka kompletnosti pretrage, heurističkim pristupom brzo i uz malu memorijsku potrošnju pronalazi dobre, po nekoj izabranoj metrici, putanje u težinskom grafu. U kontekstu simboličkog izvršavanja, ova ideja se može primeniti na pronalaženje putanja koje, na primer, maksimizuju pokrivenost koda.
+Algoritam pretrage \textit{Beam Search}, nadalje \textit{BS} algoritam, svoje najveće primene nalazi u oblasti mašinskog učenja, konkretno u obradi prirodnog jezika i mašinskog prevođenja \cite{HarpySpeechRecognitionSystem, BeamSearchStrategiesForNeuralMachineTranslation, BestFirstBeamSearch}. Međutim, ideje koje on uvodi se mogu primeniti i u simboličkom izvršavanju. Naime, \textit{BS} algoritam, po cenu gubitka kompletnosti pretrage, heurističkim pristupom brzo i uz malu memorijsku potrošnju pronalazi dobre, po nekoj izabranoj meri kvaliteta, putanje u težinskom grafu. U kontekstu simboličkog izvršavanja, ova ideja se može primeniti na pronalaženje putanja koje, na primer, maksimizuju pokrivenost koda.
 
-Algoritam kao parametar prihvata ceo broj $w$, tj. širinu pretrage, i zasnovan na \textit{BFS} pretrazi, sa modifikacijom da na svakom nivou stabla pretrage zadržava samo $w$ najboljih čvorova (najveće ili najmanje težine, zavisno od izabrane metrike), a ostale čvorove odbacuje. Primer izvršavanja za $w = 2$ nad stablom gde se prednost daje čvorovima veće težine prikazan je na slici \ref{fig:beam_search}. Zeleni čvorovi označavaju čvorove izabrane za pretragu, crveni čvorove koji su odbačeni, a svetlo crveni čvorove koji, kao potomci odbačenih čvorova, nisu ni razmatrani.
+Algoritam kao parametar prihvata ceo broj $w$, tj. širinu pretrage, i zasnovan na \textit{BFS} pretrazi, sa modifikacijom da na svakom nivou stabla pretrage zadržava samo $w$ najboljih čvorova (najveće ili najmanje težine, zavisno od izabrane mere kvaliteta čvora), a ostale čvorove odbacuje. Primer izvršavanja za $w = 2$ nad stablom gde se prednost daje čvorovima veće težine prikazan je na slici \ref{fig:beam_search}. Zeleni čvorovi označavaju čvorove izabrane za pretragu, crveni čvorove koji su odbačeni, a svetlo crveni čvorove koji, kao potomci odbačenih čvorova, nisu ni razmatrani.
 
 \begin{figure}[h!]
     \centering
@@ -67,7 +73,7 @@ Algoritam kao parametar prihvata ceo broj $w$, tj. širinu pretrage, i zasnovan 
     \label{fig:beam_search}
 \end{figure}
 
-Pošto se na svakom nivou stabla zadržava samo $w$ čvorova, a prethodno posećeni čvorovi se ne pamte, memorijska složenost ovog algoritma pretrage je $O(w)$, tj. ne zavisi od veličine stabla. Međutim, problem u ovom pristupu je to što će samo $w$ putanja biti u potpunosti (ukoliko su one konačne težine) istraženo, dok su sve ostale putanje odbačene. U kontekstu simboličkog izvršavanja, ovo bi dovelo do gubitka saglasnosti analize. Da bi se ovaj problem rešio, potrebno je izvršiti modifikaciju algoritma, koja je data u vidu \textit{Beam Stack Search} algoritma pretrage.
+Pošto se na svakom nivou stabla zadržava samo $w$ čvorova, a prethodno posećeni čvorovi se ne pamte, memorijska složenost ovog algoritma pretrage je $O(w)$, tj. ne zavisi od veličine stabla. Međutim, problem u ovom pristupu je to što će samo $w$ putanja biti u potpunosti istraženo, pod pretpostavkom da su one konačne dužine. U kontekstu simboličkog izvršavanja, ovo bi dovelo do gubitka saglasnosti analize. Da bi se ovaj problem rešio, potrebno je izvršiti modifikaciju algoritma, koja je data u vidu \textit{Beam Stack Search} algoritma pretrage.
 
 \subsection{\textit{Beam Stack Search} algoritam pretrage}
 
@@ -117,72 +123,69 @@ Za dokaz je dovoljno pokazati da je (1) veličina svakog nivoa čvorova na steku
 \end{enumerate}
 \end{proof}
 
-Ovako ograničena memorijska složenost sprečava prebrzo zauzeće memorije kao što je to slučaj kod klasičnog $BFS$ algoritma, ali pritom zadržava mogućnost šireg prostora pretrage i istovremenog praćenja više potencijalno zanimljivih putanja pomoću podesivog parametra širine pretrage $w$. Zapravo, za vrednost parametra $w = 1$, algoritam bi se ponašao kao $DFS$ algoritam pretrage, pri čemu se u svakom koraku bira bolji čvor za nastavak pretrage, dok bi se za dovoljno veliko $w$, vrednosti veće ili jednake širini celokupnog stabla, ponašao kao $BFS$ algoritam. Dodatno, izbor čvorova za posetu prema nekoj izabranoj meri kvaliteta omogućava brži pronalazak kvalitetnih putanja, što bi u kontekstu simboličkog izvršavanja moglo da podrazumeva putanje čije izvršavanje osigurava veliki stepen pokrivenosti koda.
+Ovako ograničena memorijska složenost sprečava prebrzo zauzeće memorije, kao što je to slučaj kod klasičnog $BFS$ algoritma, ali pritom zadržava mogućnost šireg prostora pretrage i istovremenog praćenja više potencijalno zanimljivih putanja pomoću podesivog parametra širine pretrage $w$. Zapravo, za vrednost parametra $w = 1$, algoritam bi se ponašao kao $DFS$ algoritam pretrage, pri čemu se u svakom koraku bira bolji čvor za nastavak pretrage, dok bi se za dovoljno veliko $w$, vrednosti veće ili jednake širini celokupnog stabla, ponašao kao $BFS$ algoritam. Dodatno, izbor čvorova za posetu prema nekoj izabranoj meri kvaliteta omogućava brži pronalazak kvalitetnih putanja, što bi u kontekstu simboličkog izvršavanja moglo da podrazumeva putanje čije izvršavanje osigurava veliki stepen pokrivenosti koda.
 
 \section{Implementacija u okviru alata za simboličko izvršavanje KLEE}
 
-U projektu koji implementira koncepte iz ovog rada \cite{Projekat} klasa \emph{BeamSearcher} predstavlja specijalizovanu implementaciju klase \emph{Searcher} koja upravlja pretragom stanja primenom modifikovanog
-$BSS$ algoritma. Bazna klasa Searcher, koja je apstraktna i implementirana u KLEE alatu,
-definiše strategije ili heuristike za selekciju stanja koja će biti dalje istražena.
+Implementacija \textit{BSS} algoritma pružena je kroz klasu \verb|BeamSearcher|, specijalizaciju apstraktne klase \verb|Searcher| - bazne klase svih algoritama pretrage u okviru alata KLEE. Potpuna implementacija dostupna je na repozitorijumu \cite{Projekat}. Klasa \verb|BeamSearcher| implementira naredne čisto virtualne metode iz klase \verb|Searcher|:
 
-Klasa BeamSearcher nasleđuje ovu baznu klasu i preopterećuje njene čisto virtualne metode:
 \begin{itemize}
-    \item \textbf{selectState:} Ova metoda bira jedno stanje za dalje istraživanje. U kontekstu $BSS$ algoritma, bira se prvo stanje u trenutnom sloju.
+    \item \textbf{selectState:} Ova metoda bira jedno stanje za dalje istraživanje. U kontekstu \textit{BSS} algoritma, bira se prvo stanje u trenutnom sloju.
 
     \item \textbf{update:} Ova metoda obaveštava pretraživač o novim ili uklonjenim stanjima. Koristi se za ažuriranje slojeva pretrage nakon što su stanja razgranata ili uklonjena.
 
-    \item \textbf{empty} Ova metoda proverava da li su sva stanja istražena, tj. da li pretraživač više nema stanja za istraživanje.
+    \item \textbf{empty:} Ova metoda proverava da li su sva stanja istražena, tj. da li pretraživač više nema stanja za istraživanje.
 \end{itemize}
 
-\subsection{Modifikacija implementacije algoritma}
+\subsection{Modifikacija u implementaciji algoritma}
 
-U implementaciji klase uvedena je modifikacija algoritma u odnosu na pređašnje opisani $BSS$: parametar \emph{beamStackSwapLimit}, koji je uveden kako bi se izbeglo zaglavljivanje u lokalnim maksimumima tokom pretrage. Ovaj parametar omogućava pretraživaču da, nakon određenog broja iteracija u kojima nije pronađeno novo pokrivanje (\emph{statesSinceLastCoveredNew}), vrati pretragu na dno steka, tj. na ranija stanja umesto da nastavlja sa trenutnog nivoa. Kada je vrednost parametra \emph{beamStackSwapLimit} postavljena na 0, algoritam se ponaša kao klasičan $BSS$.
+U implementaciji algoritma uvedena je modifikacija u odnosu na prethodno opisanu \textit{BSS} pretragu - dodatni parametar, \verb|beamStackSwapLimit|, koji je uveden kako bi se izbeglo zaglavljivanje u lokalnim maksimumima tokom pretrage. Ovaj parametar omogućava pretraživaču da, nakon određenog broja posećenih stanja u kojima nije pronađeno novo pokrivanje (\verb|statesSinceLastCoveredNew|), pretragu nastavi od sloja sa dna steka, čime se postiže vraćanje pretrage na više nivoe stabla. Postavljanjem vrednosti parametra \verb|beamStackSwapLimit| na 0, algoritam se ponaša kao standardna \textit{BSS} pretraga.
 
-Specifično, ako \emph{currentLayer} postane prazan, a broj iteracija bez novog pokrivanja premaši \emph{beamStackSwapLimit}, pretraživač će kao naredni sloj uzeti sa sloj sa dna steka slojeva \emph{unvisitedStack}, uzimajući stanja iz ranijih faza pretrage. Na taj način, pretraga može da se vrati na prethodna stanja koja su možda bliža rešenju, čime se povećava šansa za izlazak iz lokalnog maksimuma.
+Iako se ovom modifikacijom gubi garancija memorijske složenosti od $O(dw)$, eksperimentalno se pokazalo da nema značajan negativan uticaj na performanse algoritma dok istovremeno povećava njegovu robusnost u situacijama sa kompleksnim pretraživačkim prostorima.
 
-Iako ova modifikacija može povećati memorijske zahteve (gubeći garanciju složenosti od \(O(dw)\)), eksperimentalno se pokazalo da nema značajan negativan uticaj na performanse algoritma, dok istovremeno povećava njegovu robusnost u situacijama sa kompleksnim pretraživačkim prostorima.
+\subsection{Mera kvaliteta pri izboru stanja}
 
-\subsection{Metrika}
-
-Koristi se metrika za izbor čvorova koja je zasnovana na istoj strategiji kao i podrazumevani \emph{nurs} (\emph{Non-Uniform Random Search}) algoritam. Ova metrika kombinuje dve komponente:
+Mera kvaliteta za izbor stanja za naredni nivo pretrage zasnovana je na istoj strategiji kao i podrazumevani \emph{nurs:covnew} (\emph{Non-Uniform Random Search}) algoritam. Ova mera kombinuje dve komponente:
 
 \begin{enumerate}
 \item Minimalna udaljenost do najbliže nepokrivene instrukcije u grafu kontrole toka.
 \item Broj instrukcija izvršenih od poslednje pokrivene nove instrukcije.
 \end{enumerate}
 
-Algoritam maksimizuje pokrivenosti koda tako što bira stanja koja će se dalje istraživati biranjem novih, do tada nepokrivenih delova programa. Pošto manja vrednost za obe metrike daje veći prioritet stanju, one se invertuju kako bi se postigao željeni efekat.
+Algoritam maksimizuje pokrivenosti koda tako što bira stanja koja verovatnije vode do do tog trenutka nepokrivenih delova programa. Pošto manja vrednost za obe komponente daje veći prioritet stanju, one se invertuju kako bi se postigao željeni efekat.
 
-\subsection{Pokretanje Algoritma u okviru alata KLEE}
+\subsection{Pokretanje algoritma u okviru alata KLEE}
 
-KLEE omogućava korisnicima da prilagode način pretrage kroz nekoliko različitih opcija. Za korišćenje BeamSearcher algoritma, dve ključne opcije su:
+Alat KLEE omogućava korisnicima da prilagode način pretrage kroz veliki broj različitih opcija. Za podešavanje parametara \verb|BeamSearcher| pretrage, pružene su dve nove opcije:
+
 \begin{enumerate}
-    \item \textbf{beam-width}: Ova opcija postavlja širinu pretrage, što znači broj stanja koja se zadržavaju za dalje istraživanje u svakom sloju pretrage. Širina pretrage određuje koliko različitih grana se istražuje u jednom trenutku. Podrazumevana vrednost za ovu opciju je 256.
-    \item \textbf{beam-stack-swap-limit}:  Ova opcija određuje broj stanja koja će biti posećena u nizu bez pokrivanja nove instrukcije pre nego što se pretraga vrati na početak steka. Ako je postavljena na 0, pretraga će se ponašati kao klasična $BSS$. Podrazumevana vrednost je 1.000.000.
+    \item \textbf{{-}{-}beam-width}: Ova opcija postavlja širinu pretrage, tj. broj stanja koja se zadržavaju za dalje istraživanje u svakom sloju pretrage. Širina pretrage određuje koliko različitih grana se istražuje u jednom trenutku. Podrazumevana vrednost za ovu opciju je 256.
+    \item \textbf{{-}{-}beam-stack-swap-limit}: Ova opcija određuje maksimalni broj stanja koja će biti posećena u nizu bez pokrivanja nove instrukcije pre nego što se pretraga vrati na najranije odložena stanja, uzimanjem sloja sa dna steka za dalju pretragu. Postavljanjem vrednosti na 0, ova opcija se isključuje. Podrazumevana vrednost je 1 000 000.
 \end{enumerate}
 
-Da biste pokrenuli KLEE koristeći \emph{BeamSearcher} sa specifičnim vrednostima za \emph{beam-width} i \emph{beam-stack-swap-limit}, možete koristiti sledeću komandu:
+Za pokretanje alata KLEE koristeći \verb|BeamSearcher| pretragu sa specifičnim vrednostima za širinu pretrage 128 i maksimalno 500 000 stanja bez pokrivanja nove instrukcije pre prelaska na ranija stanja, može se koristiti naredna komanda:
 
 \begin{verbatim}
 klee --searcher=beam \
-    --beam-width=128 \
-    --beam-stack-swap-limit=500000 \
-    /putanja/do/programa.bc
+     --beam-width=128 \
+     --beam-stack-swap-limit=500000 \
+     /putanja/do/programa.bc
 \end{verbatim}
-
-Ova komanda pokreće KLEE sa BeamSearcher algoritmom, postavlja širinu beam pretrage na 128, i ograničava broj iteracija bez pokrivanja nove instrukcije na 500.000 pre nego što pretraga pređe na ranija stanja.
 
 \section{Eksperimentalna evaluacija algoritma}
 
-Testiranja su sprovedena u konzistentnim uslovima kako bi se omogućila adekvatna uporedivost rezultata između beam i nurs algoritama. Beam algoritam je pokretan sa podrazumevanim vrednostima, dok su sve iteracije trajale po jedan sat. Memorija je bila ograničena na 1GB, što je obezbedilo da rezultati reflektuju performanse algoritama pod istim resursnim ograničenjima. Testovi su vršeni na istim programima iz coreutils paketa kako bi se smanjio uticaj različitih ulaznih podataka na rezultate.
+Radi utvrđivanja performansi \textit{Beam Stack Search} algoritma, sprovedeni su eksperimenti nad slučajno odabranim podskupom \verb|GNU Coreutils| alata \cite{GNUCoreutils}, konkretno nad alatima \verb|printf|, \verb|mkdir|, \verb|sha256sum|, \verb|touch| i \verb|sort|. Nad svakim od njih je izvršeno po jedno pokretanje \textit{Beam Stack Search} pretrage i podrazumevane pretrage alata KLEE - isprepletane \textit{nurs:covnew} i \textit{Random Path} pretrage.
 
-Za većinu testiranih programa, beam algoritam pokazuje blago poboljšanje u pokrivenosti instrukcija u poređenju sa nurs algoritmom. Na primer, kod programa printf, beam algoritam postiže 49.81\% pokrivenosti instrukcija, što je za 2.46\% više u odnosu na nurs algoritam. Slično tome, sha256sum beleži poboljšanje od 1.31\% sa beam algoritmom.
-Međutim, postoji izuzetak kod programa sort, gde beam algoritam značajno zaostaje sa pokrivenošću od 26.54\%, što je za 9.83\% manje u poređenju sa nurs algoritmom. Ova pojava može biti posledica specifične prirode sortiranja kao problema. Rezultati se mogu videti na slici \ref{fig:icov_comparison} i u tabeli \ref{tab:icov_comparison}.
+Kako bi se omogućila adekvatna uporedivost rezultata između \textit{Beam Stack Search} i podrazumevanog algoritma pretrage, sva testiranja su sprovedena u konzistentnim uslovima sa parametrima što sličnijim onim koji su korišćeni u originalnom radu o alatu KLEE \cite{KLEE-paper-10.5555/1855741.1855756, KLEEExperiments}. \textit{Beam Stack Search} algoritam je pokretan sa podrazumevanim vrednostima parametara \verb|--beam-width| od 256 i \verb|--beam-stack-swap-limit| od 1 000 000. Kao i u originalnom eksperimentu, sve iteracije su trajale po jedan sat, a memorija je bila ograničena na 1GB.
+
+Za deo testiranih programa, \textit{Beam Stack Search} algoritam pokazuje blago poboljšanje u pokrivenosti instrukcija u odnosu na podrazumevani algoritam pretrage. Na primer, kod programa \verb|printf|, \textit{BSS} algoritam postiže 49.81\% pokrivenosti instrukcija, što je za 2.46\% više u odnosu na podrazumevani algoritam. Slično tome, \verb|sha256sum| beleži poboljšanje od 1.31\% sa \textit{BSS} algoritmom.
+
+Međutim, postoji izuzetak kod programa \verb|sort|, gde \textit{BSS} algoritam značajno zaostaje sa pokrivenošću od 26.54\%, što je za 9.83\% manje u poređenju sa podrazumevanim algoritmom. Za preostala dva programa beleže se slični rezultati. Rezultati se mogu videti na slici \ref{fig:icov_comparison} i u tabeli \ref{tab:icov_comparison}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth]{ilustracije/ICov.png}
-    \caption{Poređenje pokrivenosti instrukcija za nurs i beam algoritme}
+    \caption{Poređenje pokrivenosti instrukcija za \textit{Beam Stack Search} i podrazumevani algoritam pretrage}
     \label{fig:icov_comparison}
 \end{figure}
 
@@ -197,7 +200,7 @@ Međutim, postoji izuzetak kod programa sort, gde beam algoritam značajno zaost
 \texttt{touch} & 31.71 & 31.44 & -0.27 \\ \hline
 \texttt{sort} & 36.37 & 26.54 & -9.83 \\ \hline
 \end{tabular}
-\caption{Poređenje pokrivenosti instrukcija za nurs i beam algoritme}
+\caption{Poređenje pokrivenosti instrukcija za \textit{Beam Stack Search} i podrazumevani algoritam pretrage}
 \label{tab:icov_comparison}
 \end{table}
 
@@ -208,10 +211,7 @@ Međutim, postoji izuzetak kod programa sort, gde beam algoritam značajno zaost
     \label{fig:bcov_comparison}
 \end{figure}
 
-Slično kao i kod pokrivenosti instrukcija, beam algoritam pokazuje poboljšanje ili sličan rezultat kod većine programa kada je reč o pokrivenosti grana. Na primer, kod programa printf, beam algoritam povećava pokrivenost grana za 1.32\% u poređenju sa nurs algoritmom. Takođe, kod sha256sum, beam algoritam beleži blago poboljšanje od 0.91\%.
-
-Opet, kod programa sort, primećujemo značajno smanjenje pokrivenosti grana, gde beam algoritam postiže samo 17.80\%, što je za 8.35\% manje od nurs algoritma. Ovo može biti rezultat toga što beam algoritam, sa svojim specifičnim metodama selekcije stanja, ne uspeva da istraži određene puteve u programu koje nurs algoritam uspešno pokriva. Rezultati se mogu videti na slici \ref{fig:bcov_comparison} i u tabeli \ref{tab:bcov_comparison}.
-
+Slično kao i kod pokrivenosti instrukcija, \textit{Beam Stack Search} algoritam pokazuje poboljšanje u analizi \verb|printf| i \verb|sha256sum| programa i sličan rezultat u \verb|mkdir| i \verb|touch| kada je reč o pokrivenosti grana. Na primer, kod programa \verb|printf|, \textit{BSS} algoritam povećava pokrivenost grana za 1.32\% u poređenju sa podrazumevanim algoritmom. Takođe, kod \verb|sha256sum|, \textit{BSS} algoritam beleži blago poboljšanje od 0.91\%. Opet, kod programa \verb|sort|, primećujemo značajno smanjenje pokrivenosti grana, gde \textit{BSS} algoritam postiže samo 17.80\%, što je za 8.35\% manje od podrazumevanog algoritma. Rezultati se mogu videti na slici \ref{fig:bcov_comparison} i u tabeli \ref{tab:bcov_comparison}.
 
 \begin{table}[h!]
 \centering
@@ -229,6 +229,10 @@ Opet, kod programa sort, primećujemo značajno smanjenje pokrivenosti grana, gd
 \end{table}
 
 \section{Zaključak}
+
+Eksperimentalni rezultati pokazuju da \textit{Beam Stack Search} algoritam u velikom broju slučajeva postiže veoma dobre rezultate u kontekstu nivoa pokrivenosti koda - najčešće približno ili čak bolje od podrazumevanog algoritma pretrage alata KLEE. Međutim, zaglavljivanje u pretrazi programa velike složenosti je i dalje moguće, što se može videti iz loših rezultata prilikom analize programa \verb|sort|. Jedan moguć način rešavanja ovog problema je isprepletano pokretanje nekog od nasumičnih algoritama pretrage, poput \textit{Random Path Selection} algoritma, zajedno sa \textit{Beam Stack Search} pretragom.
+
+Potencijalno poboljšanje algoritma \textit{Beam Stack Search} u kojem se bi se dalje istraživanje moglo kretati je uvođenje nedeterminizma u sam algoritam radi izbegavanja zaglavljivanja, na primer izborom nasumičnog nivoa stanja sa steka umesto isključivo sa dna prilikom korišćenja \verb|--beam-stack-swap-limit| modifikacije. Dodatno, potrebno je sprovesti dalja istraživanja o ponašanju pretrage u zavisnosti od karakteristika ulaznog programa i vrednosti parametara \verb|--beam-width| i \verb|--beam-stack-swap-limit|.
 
 \addcontentsline{toc}{section}{Literatura}
 \appendix
