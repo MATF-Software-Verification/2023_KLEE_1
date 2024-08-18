@@ -1,0 +1,5 @@
+../src/printf.c:244
+libc/string/memchr.c:18
+libc/string/memchr.c:20
+libc/string/memchr.c:28
+libc/string/memchr.c:29

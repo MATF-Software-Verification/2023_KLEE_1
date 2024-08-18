@@ -1,0 +1,20 @@
+klee --simplify-sym-indices --write-cvcs --write-cov --output-module --max-memory=1000 --disable-inlining --optimize --use-forked-solver --use-cex-cache --libc=uclibc --posix-runtime --external-calls=all --only-output-states-covering-new --env-file=/home/aleksandar/Desktop/klee_project/test_env/test.env --run-in-dir=/tmp/sandbox --max-sym-array-size=4096 --max-solver-time=30s --max-time=60min --watchdog --max-memory-inhibit=false --max-static-fork-pct=1 --max-static-solve-pct=1 --max-static-cpfork-pct=1 --switch-type=internal --search=beam --beam-stack-swap-limit=0 ./printf.bc --sym-args 0 3 10 --sym-files 2 12 --sym-stdin 12 --sym-stdout
+PID: 3729
+Using monotonic steady clock with 1/1000000000s resolution
+Started: 2024-08-15 09:18:24
+BEGIN searcher description
+BeamSearcher
+END searcher description
+Finished: 2024-08-15 10:40:07
+Elapsed: 01:21:43
+KLEE: done: explored paths = 1222759
+KLEE: done: avg. constructs per query = 98
+KLEE: done: total queries = 27950
+KLEE: done: valid queries = 19509
+KLEE: done: invalid queries = 8441
+KLEE: done: query cex = 27950
+
+KLEE: done: total instructions = 573702145
+KLEE: done: completed paths = 59936
+KLEE: done: partially completed paths = 1162823
+KLEE: done: generated tests = 146

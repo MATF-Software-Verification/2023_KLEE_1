@@ -1,0 +1,9 @@
+runtime/POSIX/fd.c:538
+runtime/POSIX/fd.c:539
+../src/touch.c:0
+../src/touch.c:350
+../src/touch.c:351
+../src/touch.c:353
+../lib/stat-time.h:0
+../lib/stat-time.h:125
+../lib/stat-time.h:149

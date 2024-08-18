@@ -1,0 +1,4 @@
+libc/stdio/fgetc.c:66
+libc/stdio/fgetc.c:72
+libc/stdio/fgetc.c:74
+libc/stdio/getdelim.c:71

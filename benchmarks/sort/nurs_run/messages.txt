@@ -1,0 +1,20 @@
+KLEE: Using STP solver backend
+KLEE: SAT solver: MiniSat
+KLEE: ERROR: ../src/sort.c:4468: memory error: out of bound pointer
+KLEE: NOTE: now ignoring this error at this location
+KLEE: ERROR: ../src/sort.c:4521: memory error: out of bound pointer
+KLEE: NOTE: now ignoring this error at this location
+KLEE: ERROR: ../src/sort.c:1238: memory error: out of bound pointer
+KLEE: NOTE: now ignoring this error at this location
+KLEE: ERROR: ../src/sort.c:4744: memory error: invalid pointer: free
+KLEE: NOTE: now ignoring this error at this location
+KLEE: increased time budget from 5.000000 to 5.654165
+
+KLEE: increased time budget from 5.654165 to 6.475128
+
+KLEE: increased time budget from 6.475128 to 10.407661
+
+KLEE: increased time budget from 10.407661 to 14.988802
+
+KLEE: HaltTimer invoked
+KLEE: halting execution, dumping remaining states

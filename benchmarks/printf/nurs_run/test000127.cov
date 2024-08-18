@@ -1,0 +1,9 @@
+../src/printf.c:0
+../src/printf.c:167
+libc/stdio/_fpmaxtostr.c:361
+libc/stdio/_fpmaxtostr.c:362
+libc/stdio/_fpmaxtostr.c:367
+libc/stdio/_fpmaxtostr.c:368
+libc/stdio/_fpmaxtostr.c:369
+libc/stdio/_fpmaxtostr.c:370
+libc/stdio/_fpmaxtostr.c:371

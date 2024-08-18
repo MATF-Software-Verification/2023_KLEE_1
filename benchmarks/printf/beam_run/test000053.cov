@@ -1,0 +1,14 @@
+../src/printf.c:0
+../src/printf.c:216
+../src/printf.c:247
+../src/printf.c:252
+../src/printf.c:256
+../src/printf.c:258
+../src/printf.c:263
+../src/printf.c:264
+libc/stdio/_load_inttype.c:32
+libc/stdio/_load_inttype.c:33
+libc/stdio/_load_inttype.c:34
+libc/stdio/_load_inttype.c:36
+libc/stdio/_load_inttype.c:38
+libc/stdio/_uintmaxtostr.c:142

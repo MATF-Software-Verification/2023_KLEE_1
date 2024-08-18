@@ -1,0 +1,24 @@
+KLEE: WARNING: undefined reference to function: __ctype_get_mb_cur_max
+KLEE: WARNING: undefined reference to function: mbrtoc32
+KLEE: WARNING: executable has module level assembly (ignoring)
+KLEE: WARNING ONCE: calling external: syscall(16, 0, 21505, 94605871907488) at runtime/POSIX/fd.c:1011 10
+KLEE: WARNING ONCE: Alignment of memory from call "malloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: Alignment of memory from call "realloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: calling external: vprintf(94605871505456, 94605871926304) at libc/stdio/fprintf.c:35 14
+KLEE: WARNING ONCE: calling close_stdout with extra arguments.
+KLEE: WARNING ONCE: calling external: __ctype_get_mb_cur_max() at ../lib/quotearg.c:261 36
+KLEE: WARNING ONCE: calling external: printf(94605871412288, 94605863462240, 94605863462240) at ../src/printf.c:58 7
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 4903 states (over memory cap: 1122MB)
+KLEE: WARNING: killing 5240 states (over memory cap: 1127MB)
+KLEE: WARNING: killing 9320 states (over memory cap: 1232MB)
+KLEE: WARNING: killing 4832 states (over memory cap: 1116MB)
+KLEE: WARNING: killing 4239 states (over memory cap: 1104MB)
+KLEE: WARNING: killing 3905 states (over memory cap: 1102MB)
+KLEE: WARNING: killing 3635 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3412 states (over memory cap: 1101MB)
+KLEE: WARNING: write: write() ignores bytes.
+

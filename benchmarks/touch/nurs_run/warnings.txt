@@ -1,0 +1,110 @@
+KLEE: WARNING: undefined reference to function: __ctype_get_mb_cur_max
+KLEE: WARNING: undefined reference to function: futimens
+KLEE: WARNING: undefined reference to function: mbrtoc32
+KLEE: WARNING: undefined reference to function: utimensat
+KLEE: WARNING: executable has module level assembly (ignoring)
+KLEE: WARNING ONCE: calling external: syscall(16, 0, 21505, 94149836434096) at runtime/POSIX/fd.c:1011 10
+KLEE: WARNING ONCE: Alignment of memory from call "malloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: Alignment of memory from call "realloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: calling external: futimens(1, 0) at ../lib/fdutimensat.c:0 0
+KLEE: WARNING ONCE: calling close_stdout with extra arguments.
+KLEE: WARNING ONCE: calling external: utimensat(4294967196, 94149837161696, 0, 0) at ../lib/fdutimensat.c:0 0
+KLEE: WARNING ONCE: calling external: __ctype_get_mb_cur_max() at ../lib/quotearg.c:261 36
+KLEE: WARNING ONCE: calling external: vprintf(94149836094984, 94149838348320) at libc/stdio/fprintf.c:35 14
+KLEE: WARNING ONCE: calling external: gettimeofday(94149856035216, 0) at runtime/POSIX/stubs.c:159 20
+KLEE: WARNING ONCE: calling external: printf(94149836223584, 94149835957888) at ../src/touch.c:216 7
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 5010 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4963 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4924 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4890 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4857 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4836 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4817 states (over memory cap: 1101MB)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 4807 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4801 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4799 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4793 states (over memory cap: 1101MB)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 4780 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4766 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4746 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4740 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4735 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4732 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4734 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4724 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4705 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4689 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4673 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4657 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4641 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4618 states (over memory cap: 1101MB)

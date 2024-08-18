@@ -1,0 +1,15 @@
+Error: illegal instruction
+File: parse-datetime.y
+Line: 1425
+assembly.ll line: 12062
+State: 1704
+Stack: 
+	#000012062 in yylex(94845015201920, 94844965696000) at parse-datetime.y:1425
+	#100007753 in yyparse(94844965696000) at parse-datetime.c:1739
+	#200006422 in parse_datetime_body(94845008351280, 94844983392064, 94844989555696, 94844936205568, 0) at parse-datetime.y:1902
+	#300006032 in parse_datetime(94845008351280, 94844983392064, 94844989555696) at parse-datetime.y:2402
+	#400005699 in date_relative(94844983392064, 1723635293, 85862000) at ../src/touch.c:112
+	#500005264 in __klee_posix_wrapped_main(3, 94844984852096) at ../src/touch.c:366
+	#600003280 in __user_main(15, 94844961499488, 94844961499616) at runtime/POSIX/klee_init_env.c:245
+	#700000915 in __uClibc_main(15, 94844961499488) at libc/misc/internals/__uClibc_main.c:401
+	#800001081 in main(15, 94844961499488)

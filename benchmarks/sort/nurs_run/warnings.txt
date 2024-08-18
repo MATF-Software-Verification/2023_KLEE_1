@@ -1,0 +1,210 @@
+KLEE: WARNING: undefined reference to function: __ctype_get_mb_cur_max
+KLEE: WARNING: undefined reference to function: __sched_cpucount
+KLEE: WARNING: undefined reference to function: explicit_bzero
+KLEE: WARNING: undefined reference to function: getrandom
+KLEE: WARNING: undefined reference to function: mbrtoc32
+KLEE: WARNING: undefined reference to function: mkostemp
+KLEE: WARNING: undefined reference to function: pipe2
+KLEE: WARNING: undefined reference to function: posix_fadvise
+KLEE: WARNING: undefined reference to function: pthread_cond_destroy
+KLEE: WARNING: undefined reference to function: pthread_cond_init
+KLEE: WARNING: undefined reference to function: pthread_cond_signal
+KLEE: WARNING: undefined reference to function: pthread_cond_wait
+KLEE: WARNING: undefined reference to function: pthread_create
+KLEE: WARNING: undefined reference to function: pthread_join
+KLEE: WARNING: undefined reference to function: pthread_mutex_destroy
+KLEE: WARNING: undefined reference to function: pthread_mutex_init
+KLEE: WARNING: undefined reference to function: pthread_mutex_lock
+KLEE: WARNING: undefined reference to function: pthread_mutex_unlock
+KLEE: WARNING: undefined reference to function: pthread_sigmask
+KLEE: WARNING: undefined reference to function: puts
+KLEE: WARNING: undefined reference to function: reallocarray
+KLEE: WARNING: undefined reference to function: sched_getaffinity
+KLEE: WARNING: undefined reference to function: sysinfo
+KLEE: WARNING: executable has module level assembly (ignoring)
+KLEE: WARNING ONCE: calling external: syscall(16, 0, 21505, 94360660461248) at runtime/POSIX/fd.c:1011 10
+KLEE: WARNING ONCE: Alignment of memory from call "malloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: sigaction: silently ignoring
+KLEE: WARNING ONCE: Alignment of memory from call "realloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: calling external: reallocarray(0, 4, 8) at ../lib/xmalloc.c:0 0
+KLEE: WARNING ONCE: calling external: vprintf(94360660087296, 94360662281536) at libc/stdio/fprintf.c:35 14
+KLEE: WARNING ONCE: calling exit_cleanup with extra arguments.
+KLEE: WARNING ONCE: calling external: getrandom(94360641345056, 2048, 0) at ../lib/randread.c:134 5
+KLEE: WARNING ONCE: calling external: explicit_bzero(94360670701568, 4152) at ../lib/randread.c:157 3
+KLEE: WARNING ONCE: calling external: __ctype_get_mb_cur_max() at ../lib/quotearg.c:261 36
+KLEE: WARNING ONCE: calling external: printf(94360660012720, 94360647658608, 94360647658608) at ../src/sort.c:421 7
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING ONCE: calling external: getpagesize() at libc/unistd/sysconf.c:241 14
+KLEE: WARNING ONCE: calling external: sysinfo(94360912842464) at ../lib/physmem.c:116 22
+KLEE: WARNING ONCE: silently concretizing (reason: floating point) expression (ZExt w64 (Extract w8 0 (Add w32 4294967248
+                                  (SExt w32 (Read w8 0 arg01))))) to value 0 (../src/sort.c:1408)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING ONCE: calling external: posix_fadvise(0, 0, 0, 2) at ../lib/fadvise.c:30 1
+KLEE: WARNING ONCE: Alignment of memory from call "" is not modelled. Using alignment of 8.
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 5188 states (over memory cap: 1101MB)
+KLEE: WARNING ONCE: calling external: getrlimit(7, 94361656632064) at ../src/sort.c:1340 66
+KLEE: WARNING: killing 5134 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5140 states (over memory cap: 1102MB)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 5049 states (over memory cap: 1101MB)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 5008 states (over memory cap: 1101MB)
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 4965 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4939 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4897 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4868 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4848 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4858 states (over memory cap: 1102MB)
+KLEE: WARNING: killing 4790 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4762 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4782 states (over memory cap: 1102MB)
+KLEE: WARNING: killing 4708 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4688 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4664 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4641 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4621 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4599 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4613 states (over memory cap: 1102MB)
+KLEE: WARNING: killing 4556 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4544 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4516 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4500 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4483 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4469 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4453 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4436 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4422 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4405 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4402 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4386 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4382 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4365 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4343 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4337 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4311 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4295 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4276 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4264 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4247 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4235 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4213 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4201 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4195 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4184 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4173 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4175 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4167 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4142 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4134 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4122 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4103 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4094 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4079 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4067 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4061 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4043 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4042 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4027 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 4018 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3998 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3990 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3976 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3983 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3960 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3944 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3928 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3924 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3898 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3883 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3864 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3846 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3825 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3809 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3798 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3828 states (over memory cap: 1102MB)
+KLEE: WARNING: killing 3786 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3768 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3750 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3736 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3714 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 3705 states (over memory cap: 1101MB)

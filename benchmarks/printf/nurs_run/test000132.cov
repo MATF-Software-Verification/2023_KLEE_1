@@ -1,0 +1,9 @@
+../lib/printf-parse.c:74
+../lib/printf-parse.c:146
+../lib/printf-parse.c:149
+../lib/printf-parse.c:151
+libc/stdio/_vfprintf.c:920
+libc/stdio/_vfprintf.c:921
+libc/stdio/_vfprintf.c:922
+libc/stdio/_vfprintf.c:923
+libc/stdio/_vfprintf.c:924

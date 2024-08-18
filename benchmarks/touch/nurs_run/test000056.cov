@@ -1,0 +1,9 @@
+runtime/POSIX/fd.c:0
+runtime/POSIX/fd.c:588
+runtime/POSIX/fd.c:589
+runtime/POSIX/fd.c:590
+runtime/POSIX/fd.c:600
+runtime/POSIX/fd_32.c:0
+runtime/POSIX/fd_32.c:123
+runtime/POSIX/fd_32.c:124
+../src/touch.c:346

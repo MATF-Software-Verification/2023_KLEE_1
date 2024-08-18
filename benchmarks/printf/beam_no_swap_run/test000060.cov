@@ -1,0 +1,14 @@
+../src/printf.c:302
+../src/printf.c:436
+../lib/vasnprintf.c:2240
+../lib/vasnprintf.c:2816
+../lib/vasnprintf.c:2864
+../lib/vasnprintf.c:2865
+../lib/vasnprintf.c:2868
+../lib/vasnprintf.c:2870
+../lib/vasnprintf.c:2873
+../lib/vasnprintf.c:2890
+../lib/vasnprintf.c:2891
+../lib/vasnprintf.c:2904
+../lib/vasnprintf.c:2907
+../lib/vasnprintf.c:2908

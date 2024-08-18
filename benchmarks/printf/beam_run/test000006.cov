@@ -1,0 +1,4 @@
+../src/printf.c:229
+../src/printf.c:230
+../lib/c-ctype.h:332
+libc/misc/error/error.c:65

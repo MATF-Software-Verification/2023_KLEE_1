@@ -1,0 +1,15 @@
+libc/stdlib/_strtod.c:261
+libc/stdlib/_strtod.c:262
+libc/stdlib/_strtod.c:263
+libc/stdlib/_strtod.c:285
+libc/stdlib/_strtod.c:286
+libc/stdlib/_strtod.c:287
+libc/stdlib/_strtod.c:288
+libc/stdlib/_strtod.c:289
+libc/stdlib/_strtod.c:290
+libc/stdlib/_strtod.c:297
+libc/stdlib/_strtod.c:299
+libc/stdlib/_strtod.c:300
+libc/stdio/_fpmaxtostr.c:292
+libc/stdio/_fpmaxtostr.c:293
+libc/stdio/_fpmaxtostr.c:294

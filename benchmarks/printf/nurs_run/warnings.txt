@@ -1,0 +1,44 @@
+KLEE: WARNING: undefined reference to function: __ctype_get_mb_cur_max
+KLEE: WARNING: undefined reference to function: mbrtoc32
+KLEE: WARNING: executable has module level assembly (ignoring)
+KLEE: WARNING ONCE: calling external: syscall(16, 0, 21505, 94742995731152) at runtime/POSIX/fd.c:1011 10
+KLEE: WARNING ONCE: Alignment of memory from call "malloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: Alignment of memory from call "realloc" is not modelled. Using alignment of 8.
+KLEE: WARNING ONCE: calling external: printf(94742995244096, 94742987294048, 94742987294048) at ../src/printf.c:58 7
+KLEE: WARNING ONCE: calling close_stdout with extra arguments.
+KLEE: WARNING ONCE: calling external: vprintf(94742995329072, 94742996813248) at libc/stdio/fprintf.c:35 14
+KLEE: WARNING ONCE: calling external: __ctype_get_mb_cur_max() at ../lib/quotearg.c:261 36
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: write: write() ignores bytes.
+
+KLEE: WARNING: killing 8024 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7889 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7782 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7671 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7564 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7450 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7299 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7171 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 7051 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6928 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6805 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6671 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6594 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6462 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6382 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6300 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6177 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 6074 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5960 states (over memory cap: 1101MB)
+KLEE: WARNING ONCE: Alignment of memory from call "calloc" is not modelled. Using alignment of 8.
+KLEE: WARNING: killing 5871 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5758 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5636 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5520 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5437 states (over memory cap: 1101MB)
+KLEE: WARNING ONCE: silently concretizing (reason: floating point) expression (Read w8 1 arg02) to value 1 (../src/printf.c:0)
+KLEE: WARNING: killing 5349 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5258 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5186 states (over memory cap: 1101MB)
+KLEE: WARNING: killing 5124 states (over memory cap: 1101MB)

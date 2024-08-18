@@ -1,0 +1,9 @@
+../src/sort.c:1371
+../src/sort.c:1373
+libc/stdio/_vfprintf.c:668
+libc/stdio/_vfprintf.c:669
+libc/stdio/_load_inttype.c:32
+libc/stdio/_load_inttype.c:33
+libc/stdio/_load_inttype.c:34
+libc/stdio/_load_inttype.c:36
+libc/stdio/_load_inttype.c:38
