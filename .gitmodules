@@ -1,0 +1,4 @@
+[submodule "klee-beam-stack-search"]
+	path = klee-beam-stack-search
+	url = git@github.com:Aca-S/klee-beam-stack-search.git
+	branch = 3.0.x
