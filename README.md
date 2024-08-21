@@ -10,7 +10,7 @@ Analiza algoritma i dobijenih rezultata može se naći u `SystemDescription.pdf`
 
 ### Izgradnja alata KLEE
 
-Izvorni kod modifikovanog alata KLEE se nalazi u `klee/` direktorijumu. Za njegovo prevođenje, preporučuje se praćenje [zvaničnog uputstva za izgradnju alata KLEE](https://klee-se.org/build/build-llvm13/). Lista glavnih zavisnosti može se naći na [ovoj stranici](https://klee-se.org/build/dependencies/).
+Izvorni kod modifikovanog alata KLEE se nalazi u `klee-beam-stack-search/` git podmodulu. Za njegovo prevođenje, preporučuje se praćenje [zvaničnog uputstva za izgradnju alata KLEE](https://klee-se.org/build/build-llvm13/). Lista glavnih zavisnosti može se naći na [ovoj stranici](https://klee-se.org/build/dependencies/).
 
 **Napomene:**
 - Za izgradnju projekta je neophodno koristiti LLVM 13. Ranije ili novije verzije neće raditi.
